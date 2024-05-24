@@ -1,5 +1,7 @@
 package alessandro.vendramini.hackernews
 
+import alessandro.vendramini.hackernews.di.apiModule
+import alessandro.vendramini.hackernews.di.ktorModule
 import alessandro.vendramini.hackernews.di.repositoryModule
 import alessandro.vendramini.hackernews.di.viewModelModule
 import android.app.Application
@@ -14,6 +16,8 @@ class MainApp : Application() {
     }
 
     private val moduleList = listOf(
+        apiModule,
+        ktorModule,
         repositoryModule,
         viewModelModule,
     )

@@ -1,8 +1,8 @@
-package alessandro.vendramini.hackernews.presentation.navigation
+package alessandro.vendramini.hackernews.presentation.navigations
 
-import alessandro.vendramini.hackernews.presentation.view.BestStoriesView
-import alessandro.vendramini.hackernews.presentation.view.NewStoriesView
-import alessandro.vendramini.hackernews.presentation.view.TopStoriesView
+import alessandro.vendramini.hackernews.presentation.views.BestStoriesView
+import alessandro.vendramini.hackernews.presentation.views.NewStoriesView
+import alessandro.vendramini.hackernews.presentation.views.TopStoriesView
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut

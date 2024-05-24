@@ -1,7 +1,7 @@
-package alessandro.vendramini.hackernews.presentation.component
+package alessandro.vendramini.hackernews.presentation.components
 
-import alessandro.vendramini.hackernews.presentation.navigation.NAVIGATION_BAR_DESTINATIONS
-import alessandro.vendramini.hackernews.presentation.navigation.NavigationBarModel
+import alessandro.vendramini.hackernews.presentation.navigations.NAVIGATION_BAR_DESTINATIONS
+import alessandro.vendramini.hackernews.presentation.navigations.NavigationBarModel
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon

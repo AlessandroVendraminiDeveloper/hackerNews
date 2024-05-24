@@ -1,4 +1,4 @@
-package alessandro.vendramini.hackernews.presentation.navigation
+package alessandro.vendramini.hackernews.presentation.navigations
 
 import alessandro.vendramini.hackernews.R
 import androidx.compose.material.icons.Icons

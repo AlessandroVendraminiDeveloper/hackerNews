@@ -1,8 +1,8 @@
 package alessandro.vendramini.hackernews.presentation
 
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
-import alessandro.vendramini.hackernews.presentation.view.DashboardView
-import alessandro.vendramini.hackernews.presentation.viewmodel.DashboardViewModel
+import alessandro.vendramini.hackernews.presentation.views.DashboardView
+import alessandro.vendramini.hackernews.presentation.viewmodels.DashboardViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
                 val viewModel = koinViewModel<DashboardViewModel>()
                 val uiState by viewModel.uiState.collectAsState()
 
+                viewModel.aaa()
                 DashboardView(
                     navController = rememberNavController(),
                     uiState = uiState,

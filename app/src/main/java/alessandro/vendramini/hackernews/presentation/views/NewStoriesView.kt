@@ -1,4 +1,4 @@
-package alessandro.vendramini.hackernews.presentation.view
+package alessandro.vendramini.hackernews.presentation.views
 
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
 import androidx.compose.foundation.layout.Column
@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun TopStoriesView(
+fun NewStoriesView(
     navController: NavController,
 ) {
     Scaffold(
@@ -26,7 +26,7 @@ fun TopStoriesView(
                 .fillMaxSize()
                 .padding(paddingValues = paddingValues),
         ) {
-            Text(text = "Top Stories")
+            Text(text = "New Stories")
         }
     }
 }
@@ -39,7 +39,7 @@ fun TopStoriesView(
 @Composable
 private fun LightPreview() {
     HackerNewsTheme(darkTheme = false) {
-        TopStoriesView(
+        NewStoriesView(
             navController = rememberNavController(),
         )
     }
@@ -49,7 +49,7 @@ private fun LightPreview() {
 @Composable
 private fun DarkPreview() {
     HackerNewsTheme(darkTheme = true) {
-        TopStoriesView(
+        NewStoriesView(
             navController = rememberNavController(),
         )
     }

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -11,12 +12,26 @@ android {
         applicationId = "alessandro.vendramini.hackernews"
         minSdk = 29
         targetSdk = 34
+
+        buildFeatures.buildConfig = true
+        flavorDimensions += "default"
+
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    productFlavors {
+        create("development") {
+            buildConfigField(
+                type = "String",
+                name = "BASE_URL",
+                value = "\"https://hacker-news.firebaseio.com/v0\"",
+            )
         }
     }
 
@@ -75,4 +90,10 @@ dependencies {
 
     // Icons
     implementation(libs.androidx.material.icons)
+
+    // Ktor
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 }
