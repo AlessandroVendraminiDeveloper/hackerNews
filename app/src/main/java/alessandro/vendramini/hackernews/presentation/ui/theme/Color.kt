@@ -1,4 +1,4 @@
-package alessandro.vendramini.hackernews.ui.theme
+package alessandro.vendramini.hackernews.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

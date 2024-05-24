@@ -1,4 +1,4 @@
-package alessandro.vendramini.hackernews.ui.theme
+package alessandro.vendramini.hackernews.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

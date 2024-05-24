@@ -1,6 +1,6 @@
-package alessandro.vendramini.hackernews
+package alessandro.vendramini.hackernews.presentation
 
-import alessandro.vendramini.hackernews.ui.theme.HackerNewsTheme
+import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
