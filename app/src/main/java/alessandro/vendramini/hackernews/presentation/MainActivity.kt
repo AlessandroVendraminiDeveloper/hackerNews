@@ -1,16 +1,15 @@
 package alessandro.vendramini.hackernews.presentation
 
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
+import alessandro.vendramini.hackernews.presentation.view.DashboardView
+import alessandro.vendramini.hackernews.presentation.viewmodel.DashboardViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.navigation.compose.rememberNavController
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,29 +17,15 @@ class MainActivity : ComponentActivity() {
         // enableEdgeToEdge()
         setContent {
             HackerNewsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                val viewModel = koinViewModel<DashboardViewModel>()
+                val uiState by viewModel.uiState.collectAsState()
+
+                DashboardView(
+                    navController = rememberNavController(),
+                    uiState = uiState,
+                    onEvent = viewModel::onEvent,
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HackerNewsTheme {
-        Greeting("Android")
     }
 }
