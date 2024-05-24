@@ -46,7 +46,7 @@ fun HackerNewsNavigationBar(
 
 @Preview
 @Composable
-private fun InksquadNavigationBarPreview() {
+private fun Preview() {
     Column {
         HackerNewsTheme(darkTheme = false) {
             HackerNewsNavigationBar(

@@ -30,8 +30,11 @@ fun DashboardView(
                 navigationActions = navigationActions::navigateTo,
             )
         },
-    ) { _ ->
-        DashboardNavGraph(navHostController = navController)
+    ) { paddingValues ->
+        DashboardNavGraph(
+            navHostController = navController,
+            paddingValues = paddingValues,
+        )
     }
 
     LaunchedEffect(
@@ -42,6 +45,21 @@ fun DashboardView(
                     selectedDestination = navBackStackEntry?.destination?.route
                         ?: DashboardNavigationRoute.TOP_STORIES,
                 ),
+            )
+        },
+    )
+
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            onEvent(
+                DashboardViewModelEvent.FetchNewStoriesIds
+            )
+            onEvent(
+                DashboardViewModelEvent.FetchTopStoriesIds
+            )
+            onEvent(
+                DashboardViewModelEvent.FetchBestStoriesIds
             )
         },
     )

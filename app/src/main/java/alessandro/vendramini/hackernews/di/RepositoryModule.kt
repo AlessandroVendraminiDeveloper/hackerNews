@@ -1,8 +1,8 @@
 package alessandro.vendramini.hackernews.di
 
-import alessandro.vendramini.hackernews.data.api.repositories.NewStoriesRepository
+import alessandro.vendramini.hackernews.data.api.repositories.StoriesRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single { NewStoriesRepository(get()) }
+    single { StoriesRepository(get(), get()) }
 }

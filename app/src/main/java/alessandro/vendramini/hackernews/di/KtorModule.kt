@@ -39,6 +39,7 @@ private fun okHttpBuilder(): HttpClient {
             val converter = KotlinxSerializationConverter(
                 Json {
                     ignoreUnknownKeys = true
+                    isLenient = true
                 },
             )
             register(

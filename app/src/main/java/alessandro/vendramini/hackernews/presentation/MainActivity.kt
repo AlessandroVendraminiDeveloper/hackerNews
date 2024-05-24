@@ -20,7 +20,6 @@ class MainActivity : ComponentActivity() {
                 val viewModel = koinViewModel<DashboardViewModel>()
                 val uiState by viewModel.uiState.collectAsState()
 
-                viewModel.aaa()
                 DashboardView(
                     navController = rememberNavController(),
                     uiState = uiState,
