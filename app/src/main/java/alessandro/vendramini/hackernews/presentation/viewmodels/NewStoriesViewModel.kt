@@ -32,6 +32,9 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
     fun onEvent(event: NewStoriesViewModelEvent) {
         when (event) {
             is NewStoriesViewModelEvent.FetchNewStoriesIds -> {
+                _uiState.update { state ->
+                    state.copy(isRefreshing = event.isRefreshing)
+                }
                 fetchNewStoriesIds()
             }
             is NewStoriesViewModelEvent.FetchStoriesByIds -> {
@@ -66,6 +69,23 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
                             _uiState.update { state ->
                                 state.copy(newStoriesIds = response.data)
                             }
+
+                            if (uiState.value.isRefreshing) {
+                                uiState.value.newStoriesIds?.let { ids ->
+                                    // Reset pagination
+                                    paginationState = paginationState.copy(
+                                        isLoading = false,
+                                        page = 0,
+                                        endReached = false
+                                    )
+                                    fetchStoryDetail(
+                                        listOfIds = ids.subList(
+                                            0,
+                                            minOf(hitsPerPage, ids.size),
+                                        )
+                                    )
+                                }
+                            }
                         }
                         else -> {
 
@@ -79,7 +99,8 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
     private fun fetchStoryDetail(listOfIds: List<Long>) {
         viewModelScope.launch {
             val storyArrayList: ArrayList<StoryModel> =
-                uiState.value.newStories?.toCollection(ArrayList()) ?: arrayListOf()
+                uiState.value.newStories?.takeIf { !uiState.value.isRefreshing }?.toCollection(ArrayList())
+                    ?: arrayListOf()
 
             val deferredItems = listOfIds.map { id ->
                 async {
@@ -88,7 +109,11 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
                         onCallbackResource = { response ->
                             when (response) {
                                 is ApiResource.Success -> {
-                                    response.data?.let { storyArrayList.add(it) }
+                                    response.data?.let { story ->
+                                        if (storyArrayList.none { it.id == story.id }) {
+                                            storyArrayList.add(story)
+                                        }
+                                    }
                                 }
                                 else -> {
 
@@ -101,7 +126,10 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
             deferredItems.awaitAll()
 
             _uiState.update { state ->
-                state.copy(newStories = storyArrayList)
+                state.copy(
+                    newStories = storyArrayList,
+                    isRefreshing = false,
+                )
             }
 
             paginationState = paginationState.copy(

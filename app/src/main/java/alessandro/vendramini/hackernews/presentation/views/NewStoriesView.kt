@@ -54,17 +54,12 @@ fun NewStoriesView(
                                 onCardClick = {}
                             )
                         },
-                        isRefreshing = false,
+                        isRefreshing = uiState.isRefreshing,
                         paginationState = paginationState,
                         onRefresh = {
-                            /*
-                            scope.launch {
-                                isRefreshing = true
-                                delay(3000L) // Simulated API call
-                                isRefreshing = false
-                            }
-
-                             */
+                            onEvent(
+                                NewStoriesViewModelEvent.FetchNewStoriesIds(isRefreshing = true)
+                            )
                         },
                         onCanScrollForward = {
                             onEvent(
@@ -84,7 +79,7 @@ fun NewStoriesView(
             key1 = true,
             block = {
                 onEvent(
-                    NewStoriesViewModelEvent.FetchNewStoriesIds
+                    NewStoriesViewModelEvent.FetchNewStoriesIds(isRefreshing = false)
                 )
             }
         )
