@@ -34,6 +34,12 @@ fun StoryCard(
                 fontWeight = FontWeight.Bold,
             )
             Text(
+                text = "Created on: ${storyModel.time}",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.tertiary,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
                 text = "${storyModel.descendants} comments",
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.tertiary,

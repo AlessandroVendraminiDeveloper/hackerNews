@@ -47,6 +47,7 @@ fun DashboardNavGraph(
             NewStoriesView(
                 navController = navHostController,
                 uiState = uiState,
+                paginationState = viewModel.paginationState,
                 onEvent = viewModel::onEvent,
             )
         }

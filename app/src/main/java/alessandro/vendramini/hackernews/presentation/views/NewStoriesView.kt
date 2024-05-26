@@ -1,19 +1,16 @@
 package alessandro.vendramini.hackernews.presentation.views
 
-import alessandro.vendramini.hackernews.data.models.StoryModel
 import alessandro.vendramini.hackernews.presentation.components.HackerNewsTopAppBar
+import alessandro.vendramini.hackernews.presentation.components.PullToRefreshLazyColumn
 import alessandro.vendramini.hackernews.presentation.components.StoryCard
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
-import alessandro.vendramini.hackernews.presentation.viewmodels.DashboardViewModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.NewStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.NewStoriesViewModelState
-import androidx.compose.foundation.layout.Arrangement
+import alessandro.vendramini.hackernews.util.PaginationState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -28,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 fun NewStoriesView(
     navController: NavController,
     uiState: NewStoriesViewModelState,
+    paginationState: PaginationState,
     onEvent: (NewStoriesViewModelEvent) -> Unit,
 ) {
     Scaffold(
@@ -48,35 +46,60 @@ fun NewStoriesView(
                     // Show placeholder
                 }
                 else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        items(uiState.newStories) { story ->
+                    PullToRefreshLazyColumn(
+                        items = uiState.newStories,
+                        content = { story ->
                             StoryCard(
                                 storyModel = story,
                                 onCardClick = {}
                             )
+                        },
+                        isRefreshing = false,
+                        paginationState = paginationState,
+                        onRefresh = {
+                            /*
+                            scope.launch {
+                                isRefreshing = true
+                                delay(3000L) // Simulated API call
+                                isRefreshing = false
+                            }
+
+                             */
+                        },
+                        onCanScrollForward = {
+                            onEvent(
+                                NewStoriesViewModelEvent.FetchStoriesByIds(
+                                    listOfIds = uiState.newStoriesIds!!
+                                )
+                            )
                         }
-                    }
+                    )
                 }
             }
         }
     }
-    
-    LaunchedEffect(
-        key1 = DashboardViewModel.newStoriesIds,
-        block = {
-            DashboardViewModel.newStoriesIds?.let {
-                NewStoriesViewModelEvent.FetchStoriesByIds(
-                    listOfIds = it,
+
+    if (uiState.newStoriesIds == null) {
+        LaunchedEffect(
+            key1 = true,
+            block = {
+                onEvent(
+                    NewStoriesViewModelEvent.FetchNewStoriesIds
                 )
-            }?.let {
-                onEvent(it)
             }
-        }
-    )
+        )
+    } else {
+        LaunchedEffect(
+            key1 = uiState.newStoriesIds,
+            block = {
+                onEvent(
+                    NewStoriesViewModelEvent.FetchStoriesByIds(
+                        listOfIds = uiState.newStoriesIds,
+                    )
+                )
+            }
+        )
+    }
 }
 
 /**
@@ -90,6 +113,7 @@ private fun LightPreview() {
         NewStoriesView(
             navController = rememberNavController(),
             uiState = NewStoriesViewModelState(),
+            paginationState = PaginationState(),
             onEvent = {},
         )
     }
@@ -102,6 +126,7 @@ private fun DarkPreview() {
         NewStoriesView(
             navController = rememberNavController(),
             uiState = NewStoriesViewModelState(),
+            paginationState = PaginationState(),
             onEvent = {},
         )
     }
