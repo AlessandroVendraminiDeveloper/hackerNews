@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel() {
 
-    private val hitsPerPage = 2
+    private val hitsPerPage = 30
 
     private val _uiState = MutableStateFlow(value = NewStoriesViewModelState())
     val uiState: StateFlow<NewStoriesViewModelState> = _uiState.asStateFlow()
