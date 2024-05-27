@@ -80,11 +80,13 @@ fun NewStoriesView(
                             )
                         },
                         onCanScrollForward = {
-                            onEvent(
+                            uiState.newStoriesIds?.let { ids ->
                                 NewStoriesViewModelEvent.FetchStoriesByIds(
-                                    listOfIds = uiState.newStoriesIds!!
+                                    listOfIds = ids,
                                 )
-                            )
+                            }?.let {
+                                onEvent(it)
+                            }
                         }
                     )
                 }

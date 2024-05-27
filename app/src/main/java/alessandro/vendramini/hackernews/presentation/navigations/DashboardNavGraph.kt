@@ -1,6 +1,7 @@
 package alessandro.vendramini.hackernews.presentation.navigations
 
 import alessandro.vendramini.hackernews.presentation.viewmodels.NewStoriesViewModel
+import alessandro.vendramini.hackernews.presentation.viewmodels.TopStoriesViewModel
 import alessandro.vendramini.hackernews.presentation.views.BestStoriesView
 import alessandro.vendramini.hackernews.presentation.views.NewStoriesView
 import alessandro.vendramini.hackernews.presentation.views.TopStoriesView
@@ -53,7 +54,14 @@ fun DashboardNavGraph(
         composable(
             route = DashboardNavigationRoute.TOP_STORIES,
         ) {
-            TopStoriesView(navController = navHostController)
+            val viewModel = koinViewModel<TopStoriesViewModel>()
+            val uiState by viewModel.uiState.collectAsState()
+
+            TopStoriesView(
+                navController = navHostController,
+                uiState = uiState,
+                onEvent = viewModel::onEvent,
+            )
         }
         composable(
             route = DashboardNavigationRoute.BEST_STORIES,
