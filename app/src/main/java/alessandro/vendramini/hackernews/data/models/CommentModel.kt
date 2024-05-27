@@ -1,13 +1,12 @@
 package alessandro.vendramini.hackernews.data.models
 
-data class StoryModel(
+data class CommentModel(
     val by: String?,
-    val descendants: Int,
     val id: Long,
     val kids: List<Long>,
-    val score: Int,
+    val parent: Long,
+    val text: String,
     val time: Long,
-    val title: String?,
     val type: String,
     val url: String?,
 )

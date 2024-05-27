@@ -4,6 +4,7 @@ import alessandro.vendramini.hackernews.R
 import alessandro.vendramini.hackernews.data.models.StoryModel
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
 import alessandro.vendramini.hackernews.util.convertUnixToLocalDate
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,7 @@ fun StoryCard(
     isPreferred: Boolean,
     onCardClick: () -> Unit,
     onLikeClick: () -> Unit,
+    onCommentsClick: () -> Unit,
 ) {
     val hearthIcon = if (isPreferred) {
         ImageVector.vectorResource(R.drawable.ic_favorite_selected)
@@ -76,7 +78,9 @@ fun StoryCard(
             )
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onCommentsClick() },
                     text = AnnotatedString(
                         text = "${storyModel.descendants} comments",
                         spanStyle = SpanStyle(
@@ -94,24 +98,6 @@ fun StoryCard(
                     fontWeight = FontWeight.Normal
                 )
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun StoryCardPreview() {
-    Column {
-        HackerNewsTheme(darkTheme = false) {
-            StoryCard(
-                storyModel = StoryModel(
-                    title = "Hello",
-                    id = 0,
-                ),
-                isPreferred = true,
-                onLikeClick = {},
-                onCardClick = {},
-            )
         }
     }
 }

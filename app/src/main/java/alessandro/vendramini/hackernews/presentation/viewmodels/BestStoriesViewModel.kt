@@ -5,14 +5,13 @@ import alessandro.vendramini.hackernews.data.api.repositories.StoriesRepository
 import alessandro.vendramini.hackernews.data.models.StoryModel
 import alessandro.vendramini.hackernews.data.store.InternalDatastore
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.BestStoriesViewModelEvent
-import alessandro.vendramini.hackernews.presentation.viewmodels.events.TopStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.BestStoriesViewModelState
 import alessandro.vendramini.hackernews.util.gson
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -116,28 +115,37 @@ class BestStoriesViewModel(
                 uiState.value.bestStories?.takeIf { !uiState.value.isRefreshing }?.toCollection(ArrayList())
                     ?: arrayListOf()
 
-            val deferredItems = listOfIds.map { id ->
-                async {
+            val deferredItems = mutableListOf<Deferred<StoryModel?>>()
+            listOfIds.forEachIndexed { index, id ->
+                val deferredItem = async {
+                    var story: StoryModel? = null
                     repository.getStoryDetail(
                         id = id,
                         onCallbackResource = { response ->
                             when (response) {
                                 is ApiResource.Success -> {
-                                    response.data?.let { story ->
-                                        if (storyArrayList.none { it.id == story.id }) {
-                                            storyArrayList.add(story)
-                                        }
-                                    }
+                                    story = response.data
                                 }
                                 else -> {
-
+                                    // There is an error
+                                    story = null
                                 }
                             }
                         }
                     )
+                    story
+                }
+                deferredItems.add(index, deferredItem)
+            }
+
+            deferredItems.forEach { deferredItem ->
+                val story = deferredItem.await()
+                story?.let {
+                    if (storyArrayList.none { it.id == story.id }) {
+                        storyArrayList.add(story)
+                    }
                 }
             }
-            deferredItems.awaitAll()
 
             _uiState.update { state ->
                 state.copy(

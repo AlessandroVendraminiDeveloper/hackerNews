@@ -119,7 +119,7 @@ class NewStoriesViewModel(
                 uiState.value.newStories?.takeIf { !uiState.value.isRefreshing }?.toCollection(ArrayList())
                     ?: arrayListOf()
 
-            Log.d("CUSTOM", "List of ids: $listOfIds, StoryIds: $storyArrayList")
+            Log.d("CUSTOM", "List ids: $listOfIds, StoryIds: $storyArrayList")
 
             val deferredItems = mutableListOf<Deferred<StoryModel?>>()
             listOfIds.forEachIndexed { index, id ->

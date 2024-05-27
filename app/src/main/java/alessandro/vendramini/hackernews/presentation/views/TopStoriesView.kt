@@ -104,6 +104,11 @@ fun TopStoriesView(
                                         )
                                     )
                                 },
+                                onCommentsClick = {
+                                    navController.navigate(
+                                        route = "${InCommonGraph.COMMENTS}/${story.kids}",
+                                    )
+                                },
                             )
                         },
                         isRefreshing = uiState.isRefreshing,
@@ -139,7 +144,7 @@ fun TopStoriesView(
                 }
             )
         }
-        uiState.paginationState.page == 0 -> {
+        uiState.paginationState.page == 0 && !uiState.isRefreshing -> {
             LaunchedEffect(
                 key1 = true,
                 block = {

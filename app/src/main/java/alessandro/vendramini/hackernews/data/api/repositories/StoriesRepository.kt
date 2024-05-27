@@ -2,12 +2,12 @@ package alessandro.vendramini.hackernews.data.api.repositories
 
 import alessandro.vendramini.hackernews.data.api.ApiResource
 import alessandro.vendramini.hackernews.data.api.services.StoriesService
-import alessandro.vendramini.hackernews.data.api.services.StoryDetailService
+import alessandro.vendramini.hackernews.data.api.services.ItemDetailService
 import alessandro.vendramini.hackernews.data.models.StoryModel
 
 class StoriesRepository(
     private val storiesService: StoriesService,
-    private val storyDetailService: StoryDetailService,
+    private val itemDetailService: ItemDetailService,
 ) {
     suspend fun getNewStoriesIds(
         onCallbackResource: (ApiResource<List<Long>>) -> Unit,
@@ -50,9 +50,9 @@ class StoriesRepository(
         onCallbackResource: (ApiResource<StoryModel>) -> Unit,
     ) {
         runCatching {
-            storyDetailService.getStoryDetail(id = id)
-        }.onSuccess { story ->
-            onCallbackResource(ApiResource.Success(data = story))
+            itemDetailService.getItemDetail(id = id)
+        }.onSuccess { item ->
+            onCallbackResource(ApiResource.Success(data = item.convertToStoryModel()))
         }.onFailure { exception ->
             onCallbackResource(ApiResource.GeneralError(exception = Exception(exception)))
         }

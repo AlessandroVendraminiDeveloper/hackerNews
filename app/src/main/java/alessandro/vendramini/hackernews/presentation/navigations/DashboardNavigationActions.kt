@@ -3,6 +3,7 @@ package alessandro.vendramini.hackernews.presentation.navigations
 import alessandro.vendramini.hackernews.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FiberNew
+import androidx.compose.material.icons.filled.HeartBroken
 import androidx.compose.material.icons.filled.Highlight
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,7 +42,7 @@ val NAVIGATION_BAR_DESTINATIONS = listOf(
     NavigationBarModel(
         route = DashboardNavigationRoute.FAVORITES,
         titleId = R.string.favorites_stories_title,
-        icon = Icons.Default.Star,
+        icon = Icons.Default.HeartBroken,
     ),
 )
 

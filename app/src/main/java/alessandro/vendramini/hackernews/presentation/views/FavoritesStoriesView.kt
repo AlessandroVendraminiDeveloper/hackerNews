@@ -109,6 +109,11 @@ fun FavoritesStoriesView(
                                         )
                                     )
                                 },
+                                onCommentsClick = {
+                                    navController.navigate(
+                                        route = "${InCommonGraph.COMMENTS}/${story.kids}",
+                                    )
+                                },
                             )
                         }
                     }

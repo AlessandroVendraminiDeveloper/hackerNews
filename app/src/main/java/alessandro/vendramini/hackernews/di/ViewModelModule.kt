@@ -1,6 +1,7 @@
 package alessandro.vendramini.hackernews.di
 
 import alessandro.vendramini.hackernews.presentation.viewmodels.BestStoriesViewModel
+import alessandro.vendramini.hackernews.presentation.viewmodels.CommentsViewModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.DashboardViewModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.FavoriteStoriesViewModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.NewStoriesViewModel
@@ -14,4 +15,5 @@ val viewModelModule = module {
     viewModel { TopStoriesViewModel(get(), get()) }
     viewModel { BestStoriesViewModel(get(), get()) }
     viewModel { FavoriteStoriesViewModel(get(), get()) }
+    viewModel { CommentsViewModel(get()) }
 }
