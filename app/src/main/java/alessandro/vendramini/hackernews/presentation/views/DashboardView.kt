@@ -4,6 +4,7 @@ import alessandro.vendramini.hackernews.presentation.components.HackerNewsNaviga
 import alessandro.vendramini.hackernews.presentation.navigations.DashboardNavGraph
 import alessandro.vendramini.hackernews.presentation.navigations.DashboardNavigationActions
 import alessandro.vendramini.hackernews.presentation.navigations.DashboardNavigationRoute
+import alessandro.vendramini.hackernews.presentation.navigations.NAVIGATION_BAR_DESTINATIONS
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.DashboardViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.DashboardViewModelState
 import androidx.compose.material3.Scaffold
@@ -27,6 +28,7 @@ fun DashboardView(
         bottomBar = {
             HackerNewsNavigationBar(
                 selectedDestination = uiState.selectedDestination,
+                isVisible = uiState.isNavigationBarVisible,
                 navigationActions = navigationActions::navigateTo,
             )
         },
@@ -44,6 +46,13 @@ fun DashboardView(
                 DashboardViewModelEvent.UpdateSelectedDestinationState(
                     selectedDestination = navBackStackEntry?.destination?.route
                         ?: DashboardNavigationRoute.TOP_STORIES,
+                ),
+            )
+            onEvent(
+                DashboardViewModelEvent.UpdateIsNavigationBarVisibleState(
+                    isVisible = NAVIGATION_BAR_DESTINATIONS.any {
+                        it.route == navBackStackEntry?.destination?.route
+                    },
                 ),
             )
         },

@@ -47,7 +47,6 @@ fun DashboardNavGraph(
             NewStoriesView(
                 navController = navHostController,
                 uiState = uiState,
-                paginationState = viewModel.paginationState,
                 onEvent = viewModel::onEvent,
             )
         }
@@ -61,5 +60,10 @@ fun DashboardNavGraph(
         ) {
             BestStoriesView(navController = navHostController)
         }
+
+        /**
+         * InCommon views
+         */
+        inCommonNavGraph(navHostController = navHostController)
     }
 }

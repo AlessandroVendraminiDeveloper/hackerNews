@@ -4,4 +4,5 @@ import alessandro.vendramini.hackernews.presentation.navigations.DashboardNaviga
 
 data class DashboardViewModelState(
     val selectedDestination: String = DashboardNavigationRoute.NEW_STORIES,
+    val isNavigationBarVisible: Boolean = false,
 )

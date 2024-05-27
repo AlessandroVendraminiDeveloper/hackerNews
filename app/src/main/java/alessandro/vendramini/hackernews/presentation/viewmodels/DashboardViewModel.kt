@@ -38,6 +38,11 @@ class DashboardViewModel(private val newStoriesRepository: StoriesRepository) : 
                     state.copy(selectedDestination = event.selectedDestination)
                 }
             }
+            is DashboardViewModelEvent.UpdateIsNavigationBarVisibleState -> {
+                _uiState.update { state ->
+                    state.copy(isNavigationBarVisible = event.isVisible)
+                }
+            }
             is DashboardViewModelEvent.FetchNewStoriesIds -> {
                 fetchNewStoriesIds()
             }

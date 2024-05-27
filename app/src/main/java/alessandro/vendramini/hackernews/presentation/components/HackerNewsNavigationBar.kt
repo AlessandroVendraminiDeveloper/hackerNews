@@ -17,29 +17,32 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun HackerNewsNavigationBar(
     selectedDestination: String,
+    isVisible: Boolean,
     navigationActions: (NavigationBarModel) -> Unit,
 ) {
-    NavigationBar(containerColor = MaterialTheme.colorScheme.background) {
-        NAVIGATION_BAR_DESTINATIONS.forEach { navigationBarDestination ->
-            NavigationBarItem(
-                label = {
-                    Text(
-                        text = stringResource(navigationBarDestination.titleId),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = navigationBarDestination.icon,
-                        contentDescription = stringResource(
-                            id = navigationBarDestination.titleId,
-                        ),
-                    )
-                },
-                selected = selectedDestination == navigationBarDestination.route,
-                onClick = { navigationActions(navigationBarDestination) },
-            )
+    if (isVisible) {
+        NavigationBar(containerColor = MaterialTheme.colorScheme.background) {
+            NAVIGATION_BAR_DESTINATIONS.forEach { navigationBarDestination ->
+                NavigationBarItem(
+                    label = {
+                        Text(
+                            text = stringResource(navigationBarDestination.titleId),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = navigationBarDestination.icon,
+                            contentDescription = stringResource(
+                                id = navigationBarDestination.titleId,
+                            ),
+                        )
+                    },
+                    selected = selectedDestination == navigationBarDestination.route,
+                    onClick = { navigationActions(navigationBarDestination) },
+                )
+            }
         }
     }
 }
@@ -51,12 +54,14 @@ private fun Preview() {
         HackerNewsTheme(darkTheme = false) {
             HackerNewsNavigationBar(
                 selectedDestination = "",
+                isVisible = true,
                 navigationActions = {},
             )
         }
         HackerNewsTheme(darkTheme = true) {
             HackerNewsNavigationBar(
                 selectedDestination = "",
+                isVisible = true,
                 navigationActions = {},
             )
         }

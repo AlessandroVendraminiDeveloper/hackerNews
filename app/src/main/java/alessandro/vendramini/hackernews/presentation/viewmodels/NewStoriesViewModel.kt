@@ -5,10 +5,6 @@ import alessandro.vendramini.hackernews.data.api.repositories.StoriesRepository
 import alessandro.vendramini.hackernews.data.models.StoryModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.NewStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.NewStoriesViewModelState
-import alessandro.vendramini.hackernews.util.PaginationState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
@@ -21,13 +17,15 @@ import kotlinx.coroutines.launch
 
 class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel() {
 
-    private val hitsPerPage = 30
+    private val hitsPerPage = 2
 
     private val _uiState = MutableStateFlow(value = NewStoriesViewModelState())
     val uiState: StateFlow<NewStoriesViewModelState> = _uiState.asStateFlow()
 
+    /*
     var paginationState by mutableStateOf(PaginationState())
         private set
+     */
 
     fun onEvent(event: NewStoriesViewModelEvent) {
         when (event) {
@@ -38,14 +36,24 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
                 fetchNewStoriesIds()
             }
             is NewStoriesViewModelEvent.FetchStoriesByIds -> {
-                val startHit = paginationState.page * hitsPerPage
+                val startHit = uiState.value.paginationState.page * hitsPerPage
                 val isEndReached = startHit > event.listOfIds.size
 
                 if (startHit != 0) {
+                    _uiState.update { state ->
+                        state.copy(
+                            paginationState = state.paginationState.copy(
+                                isLoading = !isEndReached,
+                                endReached = isEndReached,
+                            )
+                        )
+                    }
+                    /*
                     paginationState = paginationState.copy(
                         isLoading = !isEndReached,
-                        endReached = isEndReached
+                        endReached = isEndReached,
                     )
+                     */
                 }
 
                 if (!isEndReached) {
@@ -73,11 +81,22 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
                             if (uiState.value.isRefreshing) {
                                 uiState.value.newStoriesIds?.let { ids ->
                                     // Reset pagination
+                                    _uiState.update { state ->
+                                        state.copy(
+                                            paginationState = state.paginationState.copy(
+                                                isLoading = false,
+                                                page = 0,
+                                                endReached = false
+                                            )
+                                        )
+                                    }
+                                    /*
                                     paginationState = paginationState.copy(
                                         isLoading = false,
                                         page = 0,
                                         endReached = false
                                     )
+                                     */
                                     fetchStoryDetail(
                                         listOfIds = ids.subList(
                                             0,
@@ -129,13 +148,12 @@ class NewStoriesViewModel(private val repository: StoriesRepository): ViewModel(
                 state.copy(
                     newStories = storyArrayList,
                     isRefreshing = false,
+                    paginationState = state.paginationState.copy(
+                        isLoading = false,
+                        page = state.paginationState.page + 1,
+                    )
                 )
             }
-
-            paginationState = paginationState.copy(
-                isLoading = false,
-                page = paginationState.page + 1,
-            )
         }
     }
 }
