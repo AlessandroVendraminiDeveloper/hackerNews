@@ -26,10 +26,61 @@ class CommentsViewModel(private val repository: CommentsRepository): ViewModel()
             is CommentsViewModelEvent.FetchCommentsByIds -> {
                 fetchCommentsByIds(listOfIds = event.listOfIds)
             }
+            is CommentsViewModelEvent.FetchAnswersByParents -> {
+                fetchCommentsByIdsAndParentId(
+                    parentId = event.parent,
+                    listOfIds = event.listOfIds,
+                )
+            }
         }
     }
 
     private fun fetchCommentsByIds(listOfIds: List<Long>) {
+        viewModelScope.launch {
+            val commentArrayList: ArrayList<CommentModel> = arrayListOf()
+
+            val deferredItems = mutableListOf<Deferred<CommentModel?>>()
+            listOfIds.forEachIndexed { index, id ->
+                val deferredItem = async {
+                    var comment: CommentModel? = null
+                    repository.getCommentDetail(
+                        id = id,
+                        onCallbackResource = { response ->
+                            when (response) {
+                                is ApiResource.Success -> {
+                                    comment = response.data
+                                }
+                                else -> {
+                                    // There is an error
+                                    comment = null
+                                }
+                            }
+                        }
+                    )
+                    comment
+                }
+                deferredItems.add(index, deferredItem)
+            }
+
+            deferredItems.forEach { deferredItem ->
+                val comment = deferredItem.await()
+                comment?.let {
+                    if (commentArrayList.none { it.id == comment.id }) {
+                        commentArrayList.add(comment)
+                    }
+                }
+            }
+
+            _uiState.update { state ->
+                state.copy(comments = commentArrayList)
+            }
+        }
+    }
+
+    private fun fetchCommentsByIdsAndParentId(
+        parentId: Long,
+        listOfIds: List<Long>,
+    ) {
         viewModelScope.launch {
             val commentArrayList: ArrayList<CommentModel> = arrayListOf()
 
@@ -66,8 +117,35 @@ class CommentsViewModel(private val repository: CommentsRepository): ViewModel()
             }
 
             _uiState.update { state ->
-                state.copy(comments = commentArrayList)
+                val updatedComments = findAndReplaceParentComment(
+                    state.comments!!,
+                    parentId = parentId,
+                    newAnswers = commentArrayList,
+                )
+                state.copy(comments = updatedComments)
             }
+        }
+    }
+}
+
+private fun findAndReplaceParentComment(
+    comments: List<CommentModel>,
+    parentId: Long,
+    newAnswers: List<CommentModel>,
+): List<CommentModel> {
+    return comments.map { comment ->
+        if (comment.id == parentId) {
+            comment.copy(answers = newAnswers)
+        } else if (comment.answers.isNotEmpty()) {
+            comment.copy(
+                answers = findAndReplaceParentComment(
+                    comments = comment.answers,
+                    parentId = parentId,
+                    newAnswers = newAnswers,
+                )
+            )
+        } else {
+            comment
         }
     }
 }

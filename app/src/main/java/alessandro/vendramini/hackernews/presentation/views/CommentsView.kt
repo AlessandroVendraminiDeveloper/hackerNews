@@ -1,5 +1,6 @@
 package alessandro.vendramini.hackernews.presentation.views
 
+import alessandro.vendramini.hackernews.presentation.components.CommentCard
 import alessandro.vendramini.hackernews.presentation.components.HackerNewsTopAppBar
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.CommentsViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.CommentsViewModelState
@@ -70,11 +71,18 @@ fun CommentsView(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(uiState.comments) {
-                            Text(
-                                modifier = Modifier.background(color = Color.Cyan),
-                                text = it.text,
-                                fontSize = 12.sp,
+                        items(uiState.comments) { comment ->
+                            CommentCard(
+                                modifier = Modifier.padding(16.dp),
+                                commentModel = comment,
+                                onShowMoreClick = { pair ->
+                                    onEvent(
+                                        CommentsViewModelEvent.FetchAnswersByParents(
+                                            parent = pair.first,
+                                            listOfIds = pair.second,
+                                        )
+                                    )
+                                }
                             )
                         }
                     }

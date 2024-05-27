@@ -9,4 +9,6 @@ data class CommentModel(
     val time: Long,
     val type: String,
     val url: String?,
+
+    val answers: List<CommentModel> = listOf()
 )
