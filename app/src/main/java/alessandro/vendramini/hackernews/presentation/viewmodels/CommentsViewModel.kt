@@ -3,8 +3,10 @@ package alessandro.vendramini.hackernews.presentation.viewmodels
 import alessandro.vendramini.hackernews.data.api.ApiResource
 import alessandro.vendramini.hackernews.data.api.repositories.CommentsRepository
 import alessandro.vendramini.hackernews.data.models.CommentModel
+import alessandro.vendramini.hackernews.data.models.StoryModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.CommentsViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.CommentsViewModelState
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Deferred
@@ -17,13 +19,46 @@ import kotlinx.coroutines.launch
 
 class CommentsViewModel(private val repository: CommentsRepository): ViewModel() {
 
+    private val hitsPerPage = 30
+
     private val _uiState = MutableStateFlow(value = CommentsViewModelState())
     val uiState: StateFlow<CommentsViewModelState> = _uiState.asStateFlow()
 
     fun onEvent(event: CommentsViewModelEvent) {
         when (event) {
             is CommentsViewModelEvent.FetchCommentsByIds -> {
-                fetchCommentsByIds(listOfIds = event.listOfIds)
+                val startHit = uiState.value.paginationState.page * hitsPerPage
+                val isEndReached = startHit > event.listOfIds.size
+
+                if (startHit != 0) {
+                    _uiState.update { state ->
+                        state.copy(
+                            paginationState = state.paginationState.copy(
+                                isLoading = !isEndReached,
+                                endReached = isEndReached,
+                            )
+                        )
+                    }
+                }
+
+                if (!isEndReached) {
+                    // Less items, end pagination
+                    if (startHit + hitsPerPage > event.listOfIds.size) {
+                        _uiState.update { state ->
+                            state.copy(
+                                paginationState = state.paginationState.copy(
+                                    endReached = true,
+                                )
+                            )
+                        }
+                    }
+                    fetchCommentsDetailByIds(
+                        listOfIds = event.listOfIds.subList(
+                            startHit,
+                            minOf(startHit + hitsPerPage, event.listOfIds.size),
+                        )
+                    )
+                }
             }
             is CommentsViewModelEvent.FetchAnswersByParents -> {
                 fetchCommentsByIdsAndParentId(
@@ -34,9 +69,11 @@ class CommentsViewModel(private val repository: CommentsRepository): ViewModel()
         }
     }
 
-    private fun fetchCommentsByIds(listOfIds: List<Long>) {
+    private fun fetchCommentsDetailByIds(listOfIds: List<Long>) {
         viewModelScope.launch {
-            val commentArrayList: ArrayList<CommentModel> = arrayListOf()
+            val commentArrayList: ArrayList<CommentModel> =
+                uiState.value.comments?.toCollection(ArrayList())
+                    ?: arrayListOf()
 
             val deferredItems = mutableListOf<Deferred<CommentModel?>>()
             listOfIds.forEachIndexed { index, id ->
@@ -71,7 +108,13 @@ class CommentsViewModel(private val repository: CommentsRepository): ViewModel()
             }
 
             _uiState.update { state ->
-                state.copy(comments = commentArrayList)
+                state.copy(
+                    comments = commentArrayList,
+                    paginationState = state.paginationState.copy(
+                        isLoading = false,
+                        page = state.paginationState.page + 1,
+                    )
+                )
             }
         }
     }
@@ -121,7 +164,13 @@ class CommentsViewModel(private val repository: CommentsRepository): ViewModel()
                     parentId = parentId,
                     newAnswers = commentArrayList,
                 )
-                state.copy(comments = updatedComments)
+                state.copy(
+                    comments = updatedComments,
+                    paginationState = state.paginationState.copy(
+                        isLoading = false,
+                        page = state.paginationState.page + 1,
+                    )
+                )
             }
         }
     }

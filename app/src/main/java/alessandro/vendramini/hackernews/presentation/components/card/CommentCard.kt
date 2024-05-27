@@ -1,4 +1,4 @@
-package alessandro.vendramini.hackernews.presentation.components
+package alessandro.vendramini.hackernews.presentation.components.card
 
 import alessandro.vendramini.hackernews.data.models.CommentModel
 import androidx.compose.foundation.clickable

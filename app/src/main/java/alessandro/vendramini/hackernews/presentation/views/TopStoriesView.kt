@@ -2,7 +2,7 @@ package alessandro.vendramini.hackernews.presentation.views
 
 import alessandro.vendramini.hackernews.presentation.components.HackerNewsTopAppBar
 import alessandro.vendramini.hackernews.presentation.components.PullToRefreshLazyColumn
-import alessandro.vendramini.hackernews.presentation.components.StoryCard
+import alessandro.vendramini.hackernews.presentation.components.card.StoryCard
 import alessandro.vendramini.hackernews.presentation.components.skeleton.StorySkeletonCard
 import alessandro.vendramini.hackernews.presentation.navigations.InCommonGraph
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme

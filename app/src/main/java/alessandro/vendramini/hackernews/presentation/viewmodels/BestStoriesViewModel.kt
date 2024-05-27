@@ -36,7 +36,7 @@ class BestStoriesViewModel(
                 }
                 fetchBestStoriesIds()
             }
-            is BestStoriesViewModelEvent.FetchStoriesByIds -> {
+            is BestStoriesViewModelEvent.FetchStoriesDetailByIds -> {
                 val startHit = uiState.value.paginationState.page * hitsPerPage
                 val isEndReached = startHit > event.listOfIds.size
 

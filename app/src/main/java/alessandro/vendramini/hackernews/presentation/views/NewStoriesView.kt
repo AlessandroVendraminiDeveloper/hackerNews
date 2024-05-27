@@ -2,7 +2,7 @@ package alessandro.vendramini.hackernews.presentation.views
 
 import alessandro.vendramini.hackernews.presentation.components.HackerNewsTopAppBar
 import alessandro.vendramini.hackernews.presentation.components.PullToRefreshLazyColumn
-import alessandro.vendramini.hackernews.presentation.components.StoryCard
+import alessandro.vendramini.hackernews.presentation.components.card.StoryCard
 import alessandro.vendramini.hackernews.presentation.components.skeleton.StorySkeletonCard
 import alessandro.vendramini.hackernews.presentation.navigations.InCommonGraph
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
