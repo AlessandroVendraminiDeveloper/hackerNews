@@ -1,9 +1,11 @@
 package alessandro.vendramini.hackernews.presentation.navigations
 
 import alessandro.vendramini.hackernews.presentation.viewmodels.BestStoriesViewModel
+import alessandro.vendramini.hackernews.presentation.viewmodels.FavoriteStoriesViewModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.NewStoriesViewModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.TopStoriesViewModel
 import alessandro.vendramini.hackernews.presentation.views.BestStoriesView
+import alessandro.vendramini.hackernews.presentation.views.FavoritesStoriesView
 import alessandro.vendramini.hackernews.presentation.views.NewStoriesView
 import alessandro.vendramini.hackernews.presentation.views.TopStoriesView
 import androidx.compose.animation.core.tween
@@ -71,6 +73,18 @@ fun DashboardNavGraph(
             val uiState by viewModel.uiState.collectAsState()
 
             BestStoriesView(
+                navController = navHostController,
+                uiState = uiState,
+                onEvent = viewModel::onEvent,
+            )
+        }
+        composable(
+            route = DashboardNavigationRoute.FAVORITES,
+        ) {
+            val viewModel = koinViewModel<FavoriteStoriesViewModel>()
+            val uiState by viewModel.uiState.collectAsState()
+
+            FavoritesStoriesView(
                 navController = navHostController,
                 uiState = uiState,
                 onEvent = viewModel::onEvent,

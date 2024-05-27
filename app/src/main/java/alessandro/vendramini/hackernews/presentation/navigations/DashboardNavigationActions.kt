@@ -13,6 +13,7 @@ object DashboardNavigationRoute {
     const val NEW_STORIES = "new_stories_tab"
     const val TOP_STORIES = "top_stories_tab"
     const val BEST_STORIES = "best_stories_tab"
+    const val FAVORITES = "favorites_tab"
 }
 
 data class NavigationBarModel(
@@ -35,6 +36,11 @@ val NAVIGATION_BAR_DESTINATIONS = listOf(
     NavigationBarModel(
         route = DashboardNavigationRoute.BEST_STORIES,
         titleId = R.string.best_stories_title,
+        icon = Icons.Default.Star,
+    ),
+    NavigationBarModel(
+        route = DashboardNavigationRoute.FAVORITES,
+        titleId = R.string.favorites_stories_title,
         icon = Icons.Default.Star,
     ),
 )

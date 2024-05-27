@@ -41,7 +41,8 @@ fun <T> PullToRefreshLazyColumn(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(16.dp),
-    verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(16.dp)
+    verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(16.dp),
+    isPullToRefreshEnabled: Boolean = true,
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -109,10 +110,12 @@ fun <T> PullToRefreshLazyColumn(
             }
         )
 
-        PullToRefreshContainer(
-            state = pullToRefreshState,
-            modifier = Modifier
-                .align(Alignment.TopCenter),
-        )
+        if (isPullToRefreshEnabled) {
+            PullToRefreshContainer(
+                state = pullToRefreshState,
+                modifier = Modifier
+                    .align(Alignment.TopCenter),
+            )
+        }
     }
 }

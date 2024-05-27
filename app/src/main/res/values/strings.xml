@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">HackerNews</string>
 
-    <string name="new_stories_title">New stories</string>
-    <string name="top_stories_title">Top stories</string>
-    <string name="best_stories_title">Best stories</string>
+    <string name="new_stories_title">New</string>
+    <string name="top_stories_title">Top</string>
+    <string name="best_stories_title">Best</string>
+    <string name="favorites_stories_title">Favorites</string>
 </resources>

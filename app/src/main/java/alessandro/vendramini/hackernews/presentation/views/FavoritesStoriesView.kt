@@ -1,15 +1,13 @@
 package alessandro.vendramini.hackernews.presentation.views
 
 import alessandro.vendramini.hackernews.presentation.components.HackerNewsTopAppBar
-import alessandro.vendramini.hackernews.presentation.components.PullToRefreshLazyColumn
 import alessandro.vendramini.hackernews.presentation.components.StoryCard
 import alessandro.vendramini.hackernews.presentation.components.skeleton.StorySkeletonCard
 import alessandro.vendramini.hackernews.presentation.navigations.InCommonGraph
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
 import alessandro.vendramini.hackernews.presentation.viewmodels.DashboardViewModel
-import alessandro.vendramini.hackernews.presentation.viewmodels.events.NewStoriesViewModelEvent
-import alessandro.vendramini.hackernews.presentation.viewmodels.events.TopStoriesViewModelEvent
-import alessandro.vendramini.hackernews.presentation.viewmodels.states.NewStoriesViewModelState
+import alessandro.vendramini.hackernews.presentation.viewmodels.events.FavoriteStoriesViewModelEvent
+import alessandro.vendramini.hackernews.presentation.viewmodels.states.FavoriteStoriesViewModelState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,10 +35,10 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Composable
-fun NewStoriesView(
+fun FavoritesStoriesView(
     navController: NavController,
-    uiState: NewStoriesViewModelState,
-    onEvent: (NewStoriesViewModelEvent) -> Unit,
+    uiState: FavoriteStoriesViewModelState,
+    onEvent: (FavoriteStoriesViewModelEvent) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -48,13 +47,13 @@ fun NewStoriesView(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             HackerNewsTopAppBar(
-                title = "New Stories",
+                title = "Favorites Stories",
             )
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             when {
-                uiState.newStories == null -> {
+                uiState.favoriteStories == null -> {
                     // Is loading
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -66,20 +65,23 @@ fun NewStoriesView(
                         }
                     }
                 }
-                uiState.newStories.isEmpty()-> {
+                uiState.favoriteStories.isEmpty()-> {
                     // Show placeholder
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        Text(text = "List is empty, try to refresh")
+                        Text(text = "Add a story by clicking the like icon")
                     }
                 }
                 else -> {
-                    PullToRefreshLazyColumn(
-                        items = uiState.newStories,
-                        content = { story ->
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        items(uiState.favoriteStories) { story ->
                             StoryCard(
                                 storyModel = story,
                                 isPreferred = DashboardViewModel.preferredIds.contains(story.id),
@@ -99,60 +101,32 @@ fun NewStoriesView(
                                 },
                                 onLikeClick = {
                                     onEvent(
-                                        NewStoriesViewModelEvent.UpdatePreferredList(
+                                        FavoriteStoriesViewModelEvent.UpdatePreferredList(
                                             id = story.id,
-                                            isAddFromList = !DashboardViewModel.preferredIds.contains(story.id),
+                                            isAddFromList = !DashboardViewModel.preferredIds.contains(
+                                                story.id
+                                            ),
                                         )
                                     )
                                 },
                             )
-                        },
-                        isRefreshing = uiState.isRefreshing,
-                        paginationState = uiState.paginationState,
-                        onRefresh = {
-                            onEvent(
-                                NewStoriesViewModelEvent.FetchNewStoriesIds(isRefreshing = true)
-                            )
-                        },
-                        onCanScrollForward = {
-                            uiState.newStoriesIds?.let { ids ->
-                                NewStoriesViewModelEvent.FetchStoriesByIds(
-                                    listOfIds = ids,
-                                )
-                            }?.let {
-                                onEvent(it)
-                            }
                         }
-                    )
+                    }
                 }
             }
         }
     }
 
-    when {
-        uiState.newStoriesIds == null -> {
-            LaunchedEffect(
-                key1 = true,
-                block = {
-                    onEvent(
-                        NewStoriesViewModelEvent.FetchNewStoriesIds(isRefreshing = false)
-                    )
-                }
+    LaunchedEffect(
+        key1 = DashboardViewModel.preferredIds,
+        block = {
+            onEvent(
+                FavoriteStoriesViewModelEvent.FetchStoriesByIds(
+                    listOfIds = DashboardViewModel.preferredIds,
+                )
             )
         }
-        uiState.paginationState.page == 0 && !uiState.isRefreshing -> {
-            LaunchedEffect(
-                key1 = true,
-                block = {
-                    onEvent(
-                        NewStoriesViewModelEvent.FetchStoriesByIds(
-                            listOfIds = uiState.newStoriesIds,
-                        )
-                    )
-                }
-            )
-        }
-    }
+    )
 }
 
 /**
@@ -163,9 +137,9 @@ fun NewStoriesView(
 @Composable
 private fun LightPreview() {
     HackerNewsTheme(darkTheme = false) {
-        NewStoriesView(
+        FavoritesStoriesView(
             navController = rememberNavController(),
-            uiState = NewStoriesViewModelState(),
+            uiState = FavoriteStoriesViewModelState(),
             onEvent = {},
         )
     }
@@ -175,9 +149,9 @@ private fun LightPreview() {
 @Composable
 private fun DarkPreview() {
     HackerNewsTheme(darkTheme = true) {
-        NewStoriesView(
+        FavoritesStoriesView(
             navController = rememberNavController(),
-            uiState = NewStoriesViewModelState(),
+            uiState = FavoriteStoriesViewModelState(),
             onEvent = {},
         )
     }

@@ -7,11 +7,12 @@ import alessandro.vendramini.hackernews.data.store.InternalDatastore
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.NewStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.NewStoriesViewModelState
 import alessandro.vendramini.hackernews.util.gson
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +40,8 @@ class NewStoriesViewModel(
             is NewStoriesViewModelEvent.FetchStoriesByIds -> {
                 val startHit = uiState.value.paginationState.page * hitsPerPage
                 val isEndReached = startHit > event.listOfIds.size
+
+                Log.d("CUSTOM", "FetchStoriesByIds")
 
                 if (startHit != 0) {
                     _uiState.update { state ->
@@ -76,6 +79,7 @@ class NewStoriesViewModel(
                     when (response) {
                         is ApiResource.Success -> {
                             _uiState.update { state ->
+                                Log.d("CUSTOM", "Is refresh: ${uiState.value.isRefreshing}, Print: ${response.data}")
                                 state.copy(newStoriesIds = response.data)
                             }
 
@@ -115,28 +119,41 @@ class NewStoriesViewModel(
                 uiState.value.newStories?.takeIf { !uiState.value.isRefreshing }?.toCollection(ArrayList())
                     ?: arrayListOf()
 
-            val deferredItems = listOfIds.map { id ->
-                async {
+            Log.d("CUSTOM", "List of ids: $listOfIds, StoryIds: $storyArrayList")
+
+            val deferredItems = mutableListOf<Deferred<StoryModel?>>()
+            listOfIds.forEachIndexed { index, id ->
+                val deferredItem = async {
+                    var story: StoryModel? = null
                     repository.getStoryDetail(
                         id = id,
                         onCallbackResource = { response ->
                             when (response) {
                                 is ApiResource.Success -> {
-                                    response.data?.let { story ->
-                                        if (storyArrayList.none { it.id == story.id }) {
-                                            storyArrayList.add(story)
-                                        }
-                                    }
+                                    story = response.data
                                 }
                                 else -> {
-
+                                    // There is an error
+                                    story = null
                                 }
                             }
                         }
                     )
+                    story
+                }
+                deferredItems.add(index, deferredItem)
+            }
+
+            deferredItems.forEach { deferredItem ->
+                val story = deferredItem.await()
+                story?.let {
+                    if (storyArrayList.none { it.id == story.id }) {
+                        storyArrayList.add(story)
+                    }
                 }
             }
-            deferredItems.awaitAll()
+
+            Log.d("CUSTOM", "Story list: $storyArrayList")
 
             _uiState.update { state ->
                 state.copy(
