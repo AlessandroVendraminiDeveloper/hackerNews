@@ -9,7 +9,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { DashboardViewModel(get()) }
-    viewModel { NewStoriesViewModel(get()) }
-    viewModel { TopStoriesViewModel(get()) }
-    viewModel { BestStoriesViewModel(get()) }
+    viewModel { NewStoriesViewModel(get(), get()) }
+    viewModel { TopStoriesViewModel(get(), get()) }
+    viewModel { BestStoriesViewModel(get(), get()) }
 }

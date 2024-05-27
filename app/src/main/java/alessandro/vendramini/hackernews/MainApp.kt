@@ -1,6 +1,7 @@
 package alessandro.vendramini.hackernews
 
 import alessandro.vendramini.hackernews.di.apiModule
+import alessandro.vendramini.hackernews.di.dataStoreModule
 import alessandro.vendramini.hackernews.di.ktorModule
 import alessandro.vendramini.hackernews.di.repositoryModule
 import alessandro.vendramini.hackernews.di.viewModelModule
@@ -19,6 +20,7 @@ class MainApp : Application() {
         apiModule,
         ktorModule,
         repositoryModule,
+        dataStoreModule,
         viewModelModule,
     )
 

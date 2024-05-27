@@ -1,30 +1,27 @@
 package alessandro.vendramini.hackernews.presentation.viewmodels
 
-import alessandro.vendramini.hackernews.data.api.ApiResource
-import alessandro.vendramini.hackernews.data.api.repositories.StoriesRepository
+import alessandro.vendramini.hackernews.data.store.InternalDatastore
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.DashboardViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.DashboardViewModelState
+import alessandro.vendramini.hackernews.util.gson
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DashboardViewModel(private val newStoriesRepository: StoriesRepository) : ViewModel() {
+class DashboardViewModel(
+    private val datastore: InternalDatastore
+) : ViewModel() {
 
     companion object {
-        var newStoriesIds: List<Long>? by mutableStateOf(null)
-            private set
-
-        var topStoriesIds: List<Long>? by mutableStateOf(null)
-            private set
-
-        var bestStoriesIds: List<Long>? by mutableStateOf(null)
+        var preferredIds: List<Long> by mutableStateOf(listOf())
             private set
     }
 
@@ -43,65 +40,20 @@ class DashboardViewModel(private val newStoriesRepository: StoriesRepository) : 
                     state.copy(isNavigationBarVisible = event.isVisible)
                 }
             }
-            is DashboardViewModelEvent.FetchNewStoriesIds -> {
-                fetchNewStoriesIds()
-            }
-            is DashboardViewModelEvent.FetchTopStoriesIds -> {
-                fetchTopStoriesIds()
-            }
-            is DashboardViewModelEvent.FetchBestStoriesIds -> {
-                fetchBestStoriesIds()
+            is DashboardViewModelEvent.FetchPreferredStoriesIds -> {
+                fetchPreferredStoriesIds()
             }
         }
     }
 
-    private fun fetchNewStoriesIds() {
+    private fun fetchPreferredStoriesIds() {
         viewModelScope.launch {
-            newStoriesRepository.getNewStoriesIds { response ->
-                when (response) {
-                    is ApiResource.Success -> {
-                       response.data?.let {
-                           newStoriesIds = it
-                       }
-                    }
-                    else -> {
-
-                    }
-                }
-            }
-        }
-    }
-
-    private fun fetchTopStoriesIds() {
-        viewModelScope.launch {
-            newStoriesRepository.getNewStoriesIds { response ->
-                when (response) {
-                    is ApiResource.Success -> {
-                        response.data?.let {
-                            topStoriesIds = it
-                        }
-                    }
-                    else -> {
-
-                    }
-                }
-            }
-        }
-    }
-
-    private fun fetchBestStoriesIds() {
-        viewModelScope.launch {
-            newStoriesRepository.getNewStoriesIds { response ->
-                when (response) {
-                    is ApiResource.Success -> {
-                        response.data?.let {
-                            bestStoriesIds = it
-                        }
-                    }
-                    else -> {
-
-                    }
-                }
+            datastore.getPreferredStories.collect { json ->
+                try {
+                    val typeToken = object : TypeToken<List<Long>>() {}.type
+                    val list = gson.fromJson<List<Long>>(json, typeToken)
+                    preferredIds = list
+                } catch (e: Exception) { }
             }
         }
     }

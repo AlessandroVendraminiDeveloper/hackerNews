@@ -62,13 +62,7 @@ fun DashboardView(
         key1 = Unit,
         block = {
             onEvent(
-                DashboardViewModelEvent.FetchNewStoriesIds
-            )
-            onEvent(
-                DashboardViewModelEvent.FetchTopStoriesIds
-            )
-            onEvent(
-                DashboardViewModelEvent.FetchBestStoriesIds
+                DashboardViewModelEvent.FetchPreferredStoriesIds
             )
         },
     )

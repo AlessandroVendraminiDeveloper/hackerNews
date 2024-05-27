@@ -3,10 +3,13 @@ package alessandro.vendramini.hackernews.presentation.viewmodels
 import alessandro.vendramini.hackernews.data.api.ApiResource
 import alessandro.vendramini.hackernews.data.api.repositories.StoriesRepository
 import alessandro.vendramini.hackernews.data.models.StoryModel
+import alessandro.vendramini.hackernews.data.store.InternalDatastore
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.TopStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.TopStoriesViewModelState
+import alessandro.vendramini.hackernews.util.gson
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class TopStoriesViewModel(private val repository: StoriesRepository): ViewModel() {
+class TopStoriesViewModel(
+    private val repository: StoriesRepository,
+    private val datastore: InternalDatastore,
+): ViewModel() {
 
     private val hitsPerPage = 30
 
@@ -53,6 +59,12 @@ class TopStoriesViewModel(private val repository: StoriesRepository): ViewModel(
                         )
                     )
                 }
+            }
+            is TopStoriesViewModelEvent.UpdatePreferredList -> {
+                updatePreferredList(
+                    id = event.id,
+                    isAddedFromList = event.isAddFromList,
+                )
             }
         }
     }
@@ -136,6 +148,34 @@ class TopStoriesViewModel(private val repository: StoriesRepository): ViewModel(
                     )
                 )
             }
+        }
+    }
+
+    private fun updatePreferredList(
+        id: Long,
+        isAddedFromList: Boolean,
+    ) {
+        viewModelScope.launch {
+            try {
+                val arrayOfIds = DashboardViewModel.preferredIds.toCollection(ArrayList())
+                when (isAddedFromList) {
+                    true -> {
+                        if (!arrayOfIds.contains(id)) {
+                            arrayOfIds.add(id)
+                        }
+                    }
+
+                    false -> {
+                        if (arrayOfIds.contains(id)) {
+                            arrayOfIds.remove(id)
+                        }
+                    }
+                }
+
+                val typeToken = object : TypeToken<List<Long>>() {}.type
+                val json = gson.toJson(arrayOfIds.toList(), typeToken)
+                datastore.savePreferredStories(json = json)
+            } catch (e: Exception) { }
         }
     }
 }

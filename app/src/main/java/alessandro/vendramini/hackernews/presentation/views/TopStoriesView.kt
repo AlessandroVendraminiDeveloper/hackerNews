@@ -6,6 +6,7 @@ import alessandro.vendramini.hackernews.presentation.components.StoryCard
 import alessandro.vendramini.hackernews.presentation.components.skeleton.StorySkeletonCard
 import alessandro.vendramini.hackernews.presentation.navigations.InCommonGraph
 import alessandro.vendramini.hackernews.presentation.ui.theme.HackerNewsTheme
+import alessandro.vendramini.hackernews.presentation.viewmodels.DashboardViewModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.TopStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.TopStoriesViewModelState
 import androidx.compose.foundation.layout.Arrangement
@@ -80,6 +81,7 @@ fun TopStoriesView(
                         content = { story ->
                             StoryCard(
                                 storyModel = story,
+                                isPreferred = DashboardViewModel.preferredIds.contains(story.id),
                                 onCardClick = {
                                     coroutineScope.launch {
                                         val url = withContext(Dispatchers.IO) {
@@ -93,7 +95,15 @@ fun TopStoriesView(
                                             route = "${InCommonGraph.WEB_VIEW}/$title/$url",
                                         )
                                     }
-                                }
+                                },
+                                onLikeClick = {
+                                    onEvent(
+                                        TopStoriesViewModelEvent.UpdatePreferredList(
+                                            id = story.id,
+                                            isAddFromList = !DashboardViewModel.preferredIds.contains(story.id),
+                                        )
+                                    )
+                                },
                             )
                         },
                         isRefreshing = uiState.isRefreshing,

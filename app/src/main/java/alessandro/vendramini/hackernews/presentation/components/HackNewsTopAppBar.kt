@@ -26,8 +26,6 @@ fun HackerNewsTopAppBar(
             Text(
                 text = title,
                 color = titleColor,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Medium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
