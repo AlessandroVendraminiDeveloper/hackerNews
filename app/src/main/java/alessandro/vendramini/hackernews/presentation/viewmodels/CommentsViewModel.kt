@@ -3,7 +3,6 @@ package alessandro.vendramini.hackernews.presentation.viewmodels
 import alessandro.vendramini.hackernews.data.api.ApiResource
 import alessandro.vendramini.hackernews.data.api.repositories.CommentsRepository
 import alessandro.vendramini.hackernews.data.models.CommentModel
-import alessandro.vendramini.hackernews.data.models.StoryModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.CommentsViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.CommentsViewModelState
 import androidx.lifecycle.ViewModel
@@ -118,7 +117,7 @@ class CommentsViewModel(private val repository: CommentsRepository): ViewModel()
 
             _uiState.update { state ->
                 val updatedComments = findAndReplaceParentComment(
-                    state.comments!!,
+                    comments = state.comments!!,
                     parentId = parentId,
                     newAnswers = commentArrayList,
                 )

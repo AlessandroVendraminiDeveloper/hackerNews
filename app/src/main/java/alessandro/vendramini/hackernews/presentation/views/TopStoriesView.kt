@@ -68,7 +68,9 @@ fun TopStoriesView(
                 uiState.topStories.isEmpty()-> {
                     // Show placeholder
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {

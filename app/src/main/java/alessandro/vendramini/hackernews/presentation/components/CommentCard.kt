@@ -12,10 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.HtmlCompat
 
 @Composable
 fun CommentCard(
@@ -39,7 +41,9 @@ fun CommentCard(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = commentModel.text,
+                text = buildAnnotatedString {
+                    append(HtmlCompat.fromHtml(commentModel.text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                },
                 fontSize = 12.sp,
             )
             if (commentModel.answers.isNotEmpty()) {
@@ -47,11 +51,11 @@ fun CommentCard(
                     CommentCard(
                         modifier = Modifier.padding(top = 16.dp, start = 16.dp),
                         commentModel = answer,
-                        onShowMoreClick = {
+                        onShowMoreClick = { pair ->
                             onShowMoreClick(
                                 Pair(
-                                    answer.id,
-                                    answer.kids,
+                                    pair.first,
+                                    pair.second,
                                 )
                             )
                         }
@@ -77,7 +81,7 @@ fun CommentCard(
                     ),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }
