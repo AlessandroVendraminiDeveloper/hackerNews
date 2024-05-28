@@ -36,7 +36,7 @@ class TopStoriesViewModel(
                 }
                 fetchTopStoriesIds()
             }
-            is TopStoriesViewModelEvent.FetchStoriesByIds -> {
+            is TopStoriesViewModelEvent.FetchStoriesDetailByIds -> {
                 val startHit = uiState.value.paginationState.page * hitsPerPage
                 val isEndReached = startHit > event.listOfIds.size
 

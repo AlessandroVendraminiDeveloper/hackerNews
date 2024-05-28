@@ -7,13 +7,11 @@ import alessandro.vendramini.hackernews.data.store.InternalDatastore
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.FavoriteStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.FavoriteStoriesViewModelState
 import alessandro.vendramini.hackernews.util.gson
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +27,7 @@ class FavoriteStoriesViewModel(
 
     fun onEvent(event: FavoriteStoriesViewModelEvent) {
         when (event) {
-            is FavoriteStoriesViewModelEvent.FetchStoriesByIds -> {
+            is FavoriteStoriesViewModelEvent.FetchStoriesDetailByIds -> {
                 fetchStoryDetail(listOfIds = event.listOfIds)
             }
             is FavoriteStoriesViewModelEvent.UpdatePreferredList -> {

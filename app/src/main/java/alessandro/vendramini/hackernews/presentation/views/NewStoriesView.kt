@@ -40,8 +40,10 @@ fun NewStoriesView(
     uiState: NewStoriesViewModelState,
     onEvent: (NewStoriesViewModelEvent) -> Unit,
 ) {
+    /** States **/
     val coroutineScope = rememberCoroutineScope()
 
+    /** View ui **/
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
@@ -122,7 +124,7 @@ fun NewStoriesView(
                         },
                         onCanScrollForward = {
                             uiState.newStoriesIds?.let { ids ->
-                                NewStoriesViewModelEvent.FetchStoriesByIds(
+                                NewStoriesViewModelEvent.FetchStoriesDetailByIds(
                                     listOfIds = ids,
                                 )
                             }?.let {
@@ -135,6 +137,7 @@ fun NewStoriesView(
         }
     }
 
+    /** Actions **/
     when {
         uiState.newStoriesIds == null -> {
             LaunchedEffect(
@@ -151,7 +154,7 @@ fun NewStoriesView(
                 key1 = true,
                 block = {
                     onEvent(
-                        NewStoriesViewModelEvent.FetchStoriesByIds(
+                        NewStoriesViewModelEvent.FetchStoriesDetailByIds(
                             listOfIds = uiState.newStoriesIds,
                         )
                     )

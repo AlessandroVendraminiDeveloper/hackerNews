@@ -7,7 +7,6 @@ import alessandro.vendramini.hackernews.data.store.InternalDatastore
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.NewStoriesViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.NewStoriesViewModelState
 import alessandro.vendramini.hackernews.util.gson
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.reflect.TypeToken
@@ -37,11 +36,9 @@ class NewStoriesViewModel(
                 }
                 fetchNewStoriesIds()
             }
-            is NewStoriesViewModelEvent.FetchStoriesByIds -> {
+            is NewStoriesViewModelEvent.FetchStoriesDetailByIds -> {
                 val startHit = uiState.value.paginationState.page * hitsPerPage
                 val isEndReached = startHit > event.listOfIds.size
-
-                Log.d("CUSTOM", "FetchStoriesByIds")
 
                 if (startHit != 0) {
                     _uiState.update { state ->
@@ -79,7 +76,6 @@ class NewStoriesViewModel(
                     when (response) {
                         is ApiResource.Success -> {
                             _uiState.update { state ->
-                                Log.d("CUSTOM", "Is refresh: ${uiState.value.isRefreshing}, Print: ${response.data}")
                                 state.copy(newStoriesIds = response.data)
                             }
 
@@ -119,8 +115,6 @@ class NewStoriesViewModel(
                 uiState.value.newStories?.takeIf { !uiState.value.isRefreshing }?.toCollection(ArrayList())
                     ?: arrayListOf()
 
-            Log.d("CUSTOM", "List ids: $listOfIds, StoryIds: $storyArrayList")
-
             val deferredItems = mutableListOf<Deferred<StoryModel?>>()
             listOfIds.forEachIndexed { index, id ->
                 val deferredItem = async {
@@ -152,8 +146,6 @@ class NewStoriesViewModel(
                     }
                 }
             }
-
-            Log.d("CUSTOM", "Story list: $storyArrayList")
 
             _uiState.update { state ->
                 state.copy(

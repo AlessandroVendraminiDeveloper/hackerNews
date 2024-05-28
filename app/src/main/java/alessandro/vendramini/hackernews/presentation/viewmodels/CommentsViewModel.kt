@@ -3,10 +3,8 @@ package alessandro.vendramini.hackernews.presentation.viewmodels
 import alessandro.vendramini.hackernews.data.api.ApiResource
 import alessandro.vendramini.hackernews.data.api.repositories.CommentsRepository
 import alessandro.vendramini.hackernews.data.models.CommentModel
-import alessandro.vendramini.hackernews.data.models.StoryModel
 import alessandro.vendramini.hackernews.presentation.viewmodels.events.CommentsViewModelEvent
 import alessandro.vendramini.hackernews.presentation.viewmodels.states.CommentsViewModelState
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Deferred
@@ -26,7 +24,7 @@ class CommentsViewModel(private val repository: CommentsRepository): ViewModel()
 
     fun onEvent(event: CommentsViewModelEvent) {
         when (event) {
-            is CommentsViewModelEvent.FetchCommentsByIds -> {
+            is CommentsViewModelEvent.FetchCommentsDetailByIds -> {
                 val startHit = uiState.value.paginationState.page * hitsPerPage
                 val isEndReached = startHit > event.listOfIds.size
 

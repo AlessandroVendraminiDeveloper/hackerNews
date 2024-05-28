@@ -40,8 +40,10 @@ fun FavoritesStoriesView(
     uiState: FavoriteStoriesViewModelState,
     onEvent: (FavoriteStoriesViewModelEvent) -> Unit,
 ) {
+    /** States **/
     val coroutineScope = rememberCoroutineScope()
 
+    /** View ui **/
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
@@ -124,11 +126,12 @@ fun FavoritesStoriesView(
         }
     }
 
+    /** Actions **/
     LaunchedEffect(
         key1 = DashboardViewModel.preferredIds,
         block = {
             onEvent(
-                FavoriteStoriesViewModelEvent.FetchStoriesByIds(
+                FavoriteStoriesViewModelEvent.FetchStoriesDetailByIds(
                     listOfIds = DashboardViewModel.preferredIds,
                 )
             )

@@ -40,8 +40,10 @@ fun TopStoriesView(
     uiState: TopStoriesViewModelState,
     onEvent: (TopStoriesViewModelEvent) -> Unit,
 ) {
+    /** States **/
     val coroutineScope = rememberCoroutineScope()
 
+    /** View ui **/
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
@@ -122,7 +124,7 @@ fun TopStoriesView(
                         },
                         onCanScrollForward = {
                             uiState.topStoriesIds?.let { ids ->
-                                TopStoriesViewModelEvent.FetchStoriesByIds(
+                                TopStoriesViewModelEvent.FetchStoriesDetailByIds(
                                     listOfIds = ids,
                                 )
                             }?.let {
@@ -135,6 +137,7 @@ fun TopStoriesView(
         }
     }
 
+    /** Actions **/
     when {
         uiState.topStoriesIds == null -> {
             LaunchedEffect(
@@ -151,7 +154,7 @@ fun TopStoriesView(
                 key1 = true,
                 block = {
                     onEvent(
-                        TopStoriesViewModelEvent.FetchStoriesByIds(
+                        TopStoriesViewModelEvent.FetchStoriesDetailByIds(
                             listOfIds = uiState.topStoriesIds,
                         )
                     )

@@ -21,9 +21,11 @@ fun DashboardView(
     uiState: DashboardViewModelState,
     onEvent: (DashboardViewModelEvent) -> Unit,
 ) {
+    /** States **/
     val navigationActions = remember(navController) { DashboardNavigationActions(navController) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
+    /** View ui **/
     Scaffold(
         bottomBar = {
             HackerNewsNavigationBar(
@@ -39,6 +41,7 @@ fun DashboardView(
         )
     }
 
+    /** Actions **/
     LaunchedEffect(
         key1 = navBackStackEntry?.destination,
         block = {

@@ -44,6 +44,7 @@ fun CommentsView(
     uiState: CommentsViewModelState,
     onEvent: (CommentsViewModelEvent) -> Unit,
 ) {
+    /** View ui **/
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -127,7 +128,7 @@ fun CommentsView(
                                         Text(
                                             modifier = Modifier.clickable {
                                                 onEvent(
-                                                    CommentsViewModelEvent.FetchCommentsByIds(
+                                                    CommentsViewModelEvent.FetchCommentsDetailByIds(
                                                         listOfIds = listOfIds,
                                                     )
                                                 )
@@ -150,12 +151,13 @@ fun CommentsView(
         }
     }
 
+    /** Actions **/
     if (uiState.paginationState.page == 0) {
         LaunchedEffect(
             key1 = true,
             block = {
                 onEvent(
-                    CommentsViewModelEvent.FetchCommentsByIds(
+                    CommentsViewModelEvent.FetchCommentsDetailByIds(
                         listOfIds = listOfIds,
                     )
                 )

@@ -38,9 +38,11 @@ fun HackerNewsWebView(
     title: String?,
     url: String?,
 ) {
+    /** States **/
     var showLoader by remember { mutableStateOf(true) }
     var webView: WebView? = null
 
+    /** View ui **/
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -108,6 +110,7 @@ fun HackerNewsWebView(
         }
     }
 
+    /** Actions **/
     BackHandler(enabled = true) {
         if (webView?.canGoBack() == true) {
             webView!!.goBack()

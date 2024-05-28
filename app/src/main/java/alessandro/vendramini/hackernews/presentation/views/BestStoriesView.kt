@@ -40,8 +40,10 @@ fun BestStoriesView(
     uiState: BestStoriesViewModelState,
     onEvent: (BestStoriesViewModelEvent) -> Unit,
 ) {
+    /** States **/
     val coroutineScope = rememberCoroutineScope()
 
+    /** View ui **/
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
@@ -135,6 +137,7 @@ fun BestStoriesView(
         }
     }
 
+    /** Actions **/
     when {
         uiState.bestStoriesIds == null -> {
             LaunchedEffect(
